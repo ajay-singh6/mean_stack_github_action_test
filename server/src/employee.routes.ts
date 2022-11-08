@@ -5,7 +5,20 @@ import { collections } from "./database";
 export const employeeRouter = express.Router();
 employeeRouter.use(express.json());
 
-employeeRouter.get("/", async (_req, res) => {
+
+//routes
+
+/**
+ * @swagger
+ * employees/:
+ *  get:
+ *     description : use to request all the employees.
+ *     response : 
+ *          '200' : on a successful response.
+ *          '500': on a failed request.
+ */
+
+employeeRouter.get("/",   async (_req, res) => {
     try {
         const employees = await collections.employees.find({}).toArray();
         res.status(200).send(employees);
@@ -13,6 +26,17 @@ employeeRouter.get("/", async (_req, res) => {
         res.status(500).send(error.message);
     }
 });
+
+
+/**
+ * @swagger
+ * /{id}:
+ *  get:
+ *      description: to get a sepecific employee based on the id.
+ *      response : 
+ *          '200' : on a successful response.
+ *          '404' : 
+ */
 
 employeeRouter.get("/:id", async (req, res) => {
     try {

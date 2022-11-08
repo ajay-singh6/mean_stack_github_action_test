@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:4.4.2
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+    volumes:
+      - db:/data/db
+    networks:
+      - backend
+  
+  backend:
+    
+    build: ./server
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      DB_URL : mongodb://mongo/mean-stack
+    networks:
+      - backend
+      - frontend
+
+  ui:
+    hostname: localhost
+    build:
+      context: ./client
+    ports:
+      - $ANGULAR_LOCAL_PORT:$ANGULAR_DOCKER_PORT
+    networks:
+      - frontend  
+
+volumes: 
+  db:
+
+networks:
+  backend:
+  frontend:

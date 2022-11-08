@@ -3,6 +3,9 @@ import cors from "cors";
 import express from "express";
 import { connectToDatabase } from "./database";
 import { employeeRouter } from "./employee.routes";
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerui = require("swagger-ui-express");
+
 
 // Load environment variables from the .env file, where the ATLAS_URI is configured
 dotenv.config();
@@ -19,6 +22,27 @@ connectToDatabase(ATLAS_URI)
         const app = express();
         app.use(cors());
         app.use("/employees", employeeRouter);
+
+        const swaggerOptions = {
+            failOnErrors: true,
+            definition: {
+              info: {
+                title: "MERN Stack Example API",
+                description: "API Description",
+                contact: {
+                  name: "Ajay Singh",
+                },
+      
+                servers: ["http://localhost:5200"],
+              },
+            },
+            // ['.routes/*.ts']
+            apis: ["./src/employee.routes.ts"],
+          };
+      
+          const swaggerDocs = swaggerJsDoc(swaggerOptions);
+      
+          app.use("/apidocs", swaggerui.serve, swaggerui.setup(swaggerDocs));
 
         // start the Express server
         app.listen(5200, () => {
